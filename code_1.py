@@ -17,8 +17,8 @@ def move_robot():
     velocity_msg = Twist()
 
     # Set the linear and angular velocities
-    velocity_msg.linear.x = 1   # Adjust the linear velocity as needed
-    velocity_msg.angular.z = 1  # Adjust the angular velocity as needed
+    velocity_msg.linear.x = 10   # Adjust the linear velocity as needed
+    velocity_msg.angular.z = 10  # Adjust the angular velocity as needed
 
     # Keep publishing the velocity commands until Ctrl+C is pressed
     while not rospy.is_shutdown():
