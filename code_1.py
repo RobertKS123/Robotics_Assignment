@@ -9,12 +9,12 @@ if __name__ == '__main__':
     listener = tf.TransformListener()
 
     # Wait for the first transform to become available
-    listener.waitForTransform('/map', '/base_link', rospy.Time(), rospy.Duration(1.0))
+    listener.waitForTransform('/gazebo/get_model_state', '/mobile_base', rospy.Time(), rospy.Duration(1.0))
 
     try:
         while not rospy.is_shutdown():
             # Get the latest transform between the 'map' and 'base_link' frames
-            (translation, rotation) = listener.lookupTransform('/map', '/base_link', rospy.Time(0))
+            (translation, rotation) = listener.lookupTransform('/gazebo/get_model_state', '/mobile_base', rospy.Time(0))
 
             # Extract the position (x, y, z)
             x = translation[0]
