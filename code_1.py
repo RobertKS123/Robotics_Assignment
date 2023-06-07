@@ -8,7 +8,7 @@ def move_robot():
     rospy.init_node('turtlebot_controller', anonymous=True)
 
     # Create a publisher for publishing velocity commands
-    velocity_pub = rospy.Publisher('/base_footprint/cmd_vel', Twist, queue_size=10)
+    velocity_pub = rospy.Publisher('/mobile_base/commands/velocity', Twist, queue_size=10)
 
     # Set the rate at which to publish the velocity commands (in Hz)
     rate = rospy.Rate(10)
@@ -25,6 +25,9 @@ def move_robot():
         # Publish the velocity command
         velocity_pub.publish(velocity_msg)
         
+        # Print a message to indicate that the velocity command is published
+        rospy.loginfo("Velocity command published!")
+
         # Sleep for a while to maintain the desired publishing rate
         rate.sleep()
 
