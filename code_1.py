@@ -23,7 +23,7 @@ def SLAM():
 
         # Move the robot forward
         twist_msg = Twist()
-        twist_msg.linear.x = 0.1
+        twist_msg.linear.x = 10
         velocity_publisher.publish(twist_msg)
         
         # Wait for a small duration
