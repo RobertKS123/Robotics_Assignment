@@ -5,6 +5,7 @@ from geometry_msgs.msg import Pose
 from std_msgs.msg import Empty
 from gazebo_msgs.srv import GetModelState
 from sensor_msgs.msg import LaserScan
+from std_msgs.msg import String
 
 def SLAM():
 
@@ -14,8 +15,15 @@ def SLAM():
 
         # Initialize publishers and messages
         velocity_publisher = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
+        pub = rospy.Publisher('/my_topic', String, queue_size=10)
         
         # Create the publishers and other required variables
+        message = String()
+        message.data = "Hello, world!"
+
+        # Publish the message
+        pub.publish(message)
+
         
         # Move the robot forward
         twist_msg = Twist()
