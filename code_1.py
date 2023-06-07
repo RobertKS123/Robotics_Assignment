@@ -21,7 +21,7 @@ if __name__ == '__main__':
             y = translation[1]
             z = translation[2]
 
-            print(f'TurtleBot Location - x: {x}, y: {y}, z: {z}')
+            print('TurtleBot Location - x: ',x,'y:',y, 'z:',z)
 
             # Sleep for a short duration
             rospy.sleep(0.1)
