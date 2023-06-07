@@ -8,23 +8,19 @@ from sensor_msgs.msg import LaserScan
 from std_msgs.msg import String
 
 def SLAM():
+    rospy.init_node('slam_node', anonymous=True)
+    rate = rospy.Rate(10)
 
-    while True:
-        rospy.init_node('slam_node', anonymous=True)
-        rate = rospy.Rate(10)
+    # Initialize publishers and messages
+    velocity_publisher = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
+    pub = rospy.Publisher('/my_topic', String, queue_size=10)
 
-        # Initialize publishers and messages
-        velocity_publisher = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
-        pub = rospy.Publisher('/my_topic', String, queue_size=10)
-        
-        # Create the publishers and other required variables
-        message = String()
-        message.data = "Hello, world!"
+    while not rospy.is_shutdown():
+        hello_str = "hello world %s" % rospy.get_time()
+        rospy.loginfo(hello_str)
+        pub.publish(hello_str)
+        rate.sleep()
 
-        # Publish the message
-        pub.publish(message)
-
-        
         # Move the robot forward
         twist_msg = Twist()
         twist_msg.linear.x = 0.1
