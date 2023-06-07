@@ -18,7 +18,7 @@ def SLAM():
 
     while not rospy.is_shutdown():
         gazebo_model_state = rospy.ServiceProxy('/mobile_base/get_model_state', GetModelState)
-        response = gazebo_model_state('quadrotor', 'world')
+        response = gazebo_model_state('mobile_base', 'world')
         hello_str = str(response)
         rospy.loginfo(hello_str)
         pub.publish(hello_str)
