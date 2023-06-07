@@ -1,30 +1,41 @@
 #!/usr/bin/env python
+
 import rospy
-import tf
+from geometry_msgs.msg import Twist
+
+def move_robot():
+    # Initialize the ROS node
+    rospy.init_node('turtlebot_controller', anonymous=True)
+
+    # Create a publisher for publishing velocity commands
+    velocity_pub = rospy.Publisher('/mobile_base/cmd_vel', Twist, queue_size=10)
+
+    # Set the rate at which to publish the velocity commands (in Hz)
+    rate = rospy.Rate(10)
+
+    # Create a Twist message
+    velocity_msg = Twist()
+
+    # Set the linear and angular velocities
+    velocity_msg.linear.x = 0.2   # Adjust the linear velocity as needed
+    velocity_msg.angular.z = 0.5  # Adjust the angular velocity as needed
+
+    # Keep publishing the velocity commands until Ctrl+C is pressed
+    while not rospy.is_shutdown():
+        # Publish the velocity command
+        velocity_pub.publish(velocity_msg)
+        
+        # Sleep for a while to maintain the desired publishing rate
+        rate.sleep()
+
+        # Stop the robot after a certain time (e.g., 5 seconds)
+        rospy.sleep(5)
+        velocity_msg.linear.x = 0.0
+        velocity_msg.angular.z = 0.0
+        velocity_pub.publish(velocity_msg)
 
 if __name__ == '__main__':
-    rospy.init_node('turtlebot_location_listener')
-
-    # Create a tf listener
-    listener = tf.TransformListener()
-
-    # Wait for the first transform to become available
-    listener.waitForTransform('/gazebo/get_model_state', '/mobile_base', rospy.Time(), rospy.Duration(1.0))
-
     try:
-        while not rospy.is_shutdown():
-            # Get the latest transform between the 'map' and 'base_link' frames
-            (translation, rotation) = listener.lookupTransform('/gazebo/get_model_state', '/mobile_base', rospy.Time(0))
-
-            # Extract the position (x, y, z)
-            x = translation[0]
-            y = translation[1]
-            z = translation[2]
-
-            print('TurtleBot Location - x: ',x,'y:',y, 'z:',z)
-
-            # Sleep for a short duration
-            rospy.sleep(0.1)
-
+        move_robot()
     except rospy.ROSInterruptException:
         pass
