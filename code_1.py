@@ -1,43 +1,30 @@
 #!/usr/bin/env python
 import rospy
-from geometry_msgs.msg import Twist
-from geometry_msgs.msg import Pose
-from std_msgs.msg import Empty
-from gazebo_msgs.srv import GetModelState
-from sensor_msgs.msg import LaserScan
-from std_msgs.msg import String
-from gazebo_msgs.srv import GetModelState
-
-def SLAM():
-    rospy.init_node('slam_node', anonymous=True)
-    rate = rospy.Rate(10)
-
-    # Initialize publishers and messages
-    velocity_publisher = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
-    pub = rospy.Publisher('/my_topic', String, queue_size=10)
-
-    while not rospy.is_shutdown():
-        gazebo_model_state = rospy.ServiceProxy('/mobile_base/get_model_state', GetModelState)
-        response = gazebo_model_state('mobile_base', 'world')
-        hello_str = str(response)
-        rospy.loginfo(hello_str)
-        pub.publish(hello_str)
-        rate.sleep()
-
-        # Move the robot forward
-        twist_msg = Twist()
-        twist_msg.linear.x = 10
-        velocity_publisher.publish(twist_msg)
-        
-        # Wait for a small duration
-        rospy.sleep(1.0)
-        
-        # Stop the robot
-        twist_msg.linear.x = 0.0
-        velocity_publisher.publish(twist_msg)
+import tf
 
 if __name__ == '__main__':
+    rospy.init_node('turtlebot_location_listener')
+
+    # Create a tf listener
+    listener = tf.TransformListener()
+
+    # Wait for the first transform to become available
+    listener.waitForTransform('/map', '/base_link', rospy.Time(), rospy.Duration(1.0))
+
     try:
-        SLAM()
+        while not rospy.is_shutdown():
+            # Get the latest transform between the 'map' and 'base_link' frames
+            (translation, rotation) = listener.lookupTransform('/map', '/base_link', rospy.Time(0))
+
+            # Extract the position (x, y, z)
+            x = translation[0]
+            y = translation[1]
+            z = translation[2]
+
+            print(f'TurtleBot Location - x: {x}, y: {y}, z: {z}')
+
+            # Sleep for a short duration
+            rospy.sleep(0.1)
+
     except rospy.ROSInterruptException:
         pass
