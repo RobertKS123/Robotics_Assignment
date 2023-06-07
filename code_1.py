@@ -6,6 +6,7 @@ from std_msgs.msg import Empty
 from gazebo_msgs.srv import GetModelState
 from sensor_msgs.msg import LaserScan
 from std_msgs.msg import String
+from gazebo_msgs.srv import GetModelState
 
 def SLAM():
     rospy.init_node('slam_node', anonymous=True)
