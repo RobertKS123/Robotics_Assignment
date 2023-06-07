@@ -1,0 +1,39 @@
+In singularity run:
+
+wget https://lamp.ms.wits.ac.za/robotics/robot_assignment_ws.tar.gz
+tar zxvf robot_assignment_ws.tar.gz
+
+cd robot_assignment_ws
+catkin_make
+
+//////// if catkin_make gives error //////////
+rm -rf build
+rm -rf devel
+catkin_make
+//////////////////////////////////////////////
+
+source devel/setup.bash
+
+cd src
+
+catkin_create_pkg slam_package rospy std_msgs gmapping sensor_msgs geometry_msgs
+
+cd slam_package
+
+git clone https://github.com/RobertKS123/Robotics_Assignment.git
+
+cd ..
+cd ..
+
+catkin_make
+
+chmod +x /src/slam_package/Robotics_Assignment/code.py
+
+//////////// To Run /////////////////
+
+rosrun slam_package Robotics_Assignment/code.py
+
+/////////////////////////////////////
+
+
+
