@@ -27,7 +27,7 @@ cd ..
 
 catkin_make
 
-chmod +x /src/slam_package/Robotics_Assignment/code_1.py
+chmod +x src/slam_package/Robotics_Assignment/code_1.py
 
 //////////// To Run /////////////////
 
