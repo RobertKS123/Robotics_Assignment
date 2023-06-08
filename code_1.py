@@ -9,6 +9,7 @@ def move_robot():
 
     # Create a publisher for publishing velocity commands
     velocity_pub = rospy.Publisher('/mobile_base/commands/velocity', Twist, queue_size=10)
+    power_pub = rospy.Publisher('/mobile_base/commands/motor_power', )
 
     # Set the rate at which to publish the velocity commands (in Hz)
     rate = rospy.Rate(10)
