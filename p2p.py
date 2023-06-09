@@ -17,13 +17,13 @@ def steering_angle(current, goal):
     return math.atan2(goal.y - current.y, goal.x - current.x)
 
 def angular_vel(current, goal):
-    return 2 * (steering_angle(current.position,goal) - current.orientation.z)
+    return 2 * (steering_angle(current.position,goal) - current.orientation.w)
 
 def rotate_bot(current,goal):
     vel_pub = rospy.Publisher('/mobile_base/commands/velocity', Twist, queue_size=10)
     vel_msg = Twist()
 
-    while angular_vel(current,goal.position) >= 0.2:
+    while steering_angle(current.position,goal.position) >= 0.2:
         gazebo_model_state = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
         current = gazebo_model_state('mobile_base', 'world').pose
         a = angular_vel(current,goal.position)
