@@ -5,6 +5,8 @@ from nav_msgs.msg import Path
 from gazebo_msgs.srv import GetModelState
 from std_msgs.msg import String
 import math
+import tf
+from tf.transformations import euler_from_quaternion
 
 # send position not Pose
 def euclidean_distance(current, goal):
@@ -19,6 +21,19 @@ def steering_angle(current, goal):
 def angular_vel(current, goal):
     return 2 * (steering_angle(current.position,goal) - current.orientation.w)
 
+def current_orientation(cur):
+    current_orientation_quaternion = (cur.x, cur.y, cur.z, cur.w)
+
+# Convert quaternion to Euler angles
+    current_orientation_euler = euler_from_quaternion(current_orientation_quaternion)
+
+# Extract roll, pitch, and yaw angles from Euler angles
+    roll = current_orientation_euler[0]
+    pitch = current_orientation_euler[1]
+    yaw = current_orientation_euler[2]
+
+    return yaw
+
 def rotate_bot(current,goal):
     vel_pub = rospy.Publisher('/mobile_base/commands/velocity', Twist, queue_size=10)
     vel_msg = Twist()
@@ -26,14 +41,15 @@ def rotate_bot(current,goal):
     desired_angle = math.atan2(goal.position.y - current.position.y, goal.position.x - current.position.x)
     #desired_angle = math.atan2(current.position.y - goal.position.y, current.position.x - goal.position.x)
 
-    angle_diff = desired_angle - current.orientation.w
-
+    angle_diff = 1 - desired_angle - current_orientation(current.orientation)
     while abs(angle_diff) >= 0.02:
         gazebo_model_state = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
         current = gazebo_model_state('mobile_base', 'world').pose
 
+        print ("diff:",angle_diff,"desired", desired_angle,"current orientation:", current_orientation(current.orientation))
+
         # Calculate the difference between the desired angle and the current angle
-        angle_diff = desired_angle - current.orientation.w
+        angle_diff = desired_angle - current_orientation(current.orientation)
 
         # Adjust the angle difference to be within the range of -pi to pi
         # while angle_diff > math.pi:
