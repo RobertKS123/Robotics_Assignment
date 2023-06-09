@@ -24,6 +24,8 @@ def rotate_bot(current,goal):
     vel_msg = Twist()
 
     while angular_vel(current,goal.position) >= 0.2:
+        gazebo_model_state = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
+        current = gazebo_model_state('mobile_base', 'world').pose
         a = angular_vel(current,goal.position)
         print("a",current.orientation)
         vel_msg.angular.x = 0
@@ -44,6 +46,8 @@ def move_bot(current,goal):
 
 
     while euclidean_distance(current.position,goal.position) >= 0.2:
+        gazebo_model_state = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
+        current = gazebo_model_state('mobile_base', 'world').pose
         m = linear_vel(current.position,goal.position)
         #print("m:",m)
         vel_msg.linear.x = m
