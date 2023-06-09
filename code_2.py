@@ -41,12 +41,14 @@ def path_planning(x,y):
             coordinates = gazebo_model_state('mobile_base', 'world')
             current_pose.pose.position.x = coordinates.pose.position.x
             current_pose.pose.position.y = coordinates.pose.position.y
+            print(current_pose.pose.position.x,current_pose.pose.position.y)
         except rospy.ServiceException as e:
             rospy.logerr('Service call failed: {}'.format(e))
 
         # Perform path planning algorithm to compute the path
         path = compute_path(current_pose, target_pose)
 
+        print(path)
         # Publish the computed path
         path_pub.publish(path)
 
