@@ -17,7 +17,42 @@ def steering_angle(current, goal):
     return math.atan2(goal.y - current.y, goal.x - current.x)
 
 def angular_vel(current, goal, constant=6):
-    return constant * (steering_angle(current.position,goal) - current.w)
+    return constant * (steering_angle(current.position,goal) - current.orientation.w)
+
+def rotate_bot(current,goal):
+    vel_pub = rospy.Publisher('/mobile_base/commands/velocity', Twist, queue_size=10)
+    vel_msg = Twist()
+
+    while angular_vel(current,goal.position) >= 0.2:
+        vel_msg.angular.x = 0
+        vel_msg.angular.y = 0
+        vel_msg.angular.z = angular_vel(current,goal.position)
+        
+        vel_pub.publish(vel_msg)
+
+    vel_msg.linear.x = 0
+    vel_msg.angular.z = 0
+    vel_pub.publish(vel_msg)
+
+    return True
+
+def move_bot(current,goal):
+    vel_pub = rospy.Publisher('/mobile_base/commands/velocity', Twist, queue_size=10)
+    vel_msg = Twist()
+
+    while euclidean_distance(current.position,goal.position) >= 0.2:
+        vel_msg.linear.x = linear_vel(current.position,goal.position)
+        vel_msg.linear.y = 0
+        vel_msg.linear.z = 0
+
+        vel_pub.publish(vel_msg)
+
+    vel_msg.linear.x = 0
+    vel_msg.angular.z = 0
+    vel_pub.publish(vel_msg)
+
+    return True
+
 
 def move_turtle(x,y):
     # Initialize the ROS node
@@ -43,25 +78,9 @@ def move_turtle(x,y):
     current_pos = gazebo_model_state('mobile_base', 'world').pose
 
     # Move the robot towards the current goal point
-    while angular_vel(current_pos,goal.position) >= distance_tolerance:
-        vel_msg.angular.x = 0
-        vel_msg.angular.y = 0
-        vel_msg.angular.z = angular_vel(current_pos,goal.position)
-        
-        vel_pub.publish(vel_msg)
-    
-    while euclidean_distance(current_pos.position,goal.position) >= distance_tolerance:
-        vel_msg.linear.x = linear_vel(current_pos.position,goal.position)
-        vel_msg.linear.y = 0
-        vel_msg.linear.z = 0
+    rotate_bot(current_pos,goal)
+    move_bot(current_pos,goal)
 
-        vel_pub.publish(vel_msg)
-
-    vel_msg.linear.x = 0
-    vel_msg.angular.z = 0
-    vel_pub.publish(vel_msg)
-
-    rospy.spin()
 
 
 if __name__ == '__main__':
