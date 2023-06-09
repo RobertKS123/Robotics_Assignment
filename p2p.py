@@ -10,14 +10,14 @@ import math
 def euclidean_distance(current, goal):
     return math.sqrt((goal.x - current.x)**2 + (goal.y - current.y)** 2)
 
-def linear_vel(current, goal, constant=1.5):
+def linear_vel(current, goal, constant=0.0):
     return constant * euclidean_distance(current,goal)
 
 def steering_angle(current, goal):
     return math.atan2(goal.y - current.y, goal.x - current.x)
 
 def angular_vel(current, goal, constant=6):
-    return constant * (steering_angle(current,goal) - current.theta)
+    return constant * (steering_angle(current.position,goal) - current.w)
 
 def move_turtle(x,y):
     # Initialize the ROS node
@@ -40,18 +40,20 @@ def move_turtle(x,y):
     distance_tolerance = 0.2
 
     gazebo_model_state = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
-    current_pos = gazebo_model_state('mobile_base', 'world')
+    current_pos = gazebo_model_state('mobile_base', 'world').pose
 
     # Move the robot towards the current goal point
+    while angular_vel(current_pos,goal.position) >= distance_tolerance:
+        vel_msg.angular.x = 0
+        vel_msg.angular.y = 0
+        vel_msg.angular.z = angular_vel(current_pos,goal.position)
+        
+        vel_pub.publish(vel_msg)
+    
     while euclidean_distance(current_pos.position,goal.position) >= distance_tolerance:
         vel_msg.linear.x = linear_vel(current_pos.position,goal.position)
         vel_msg.linear.y = 0
         vel_msg.linear.z = 0
-
-        # Angular velocity in the z-axis.
-        vel_msg.angular.x = 0
-        vel_msg.angular.y = 0
-        vel_msg.angular.z = angular_vel(current_pos.position,goal.position)
 
         vel_pub.publish(vel_msg)
 
