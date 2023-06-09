@@ -10,7 +10,7 @@ import math
 def euclidean_distance(current, goal):
     return math.sqrt((goal.x - current.x)**2 + (goal.y - current.y)** 2)
 
-def linear_vel(current, goal, constant=0.0):
+def linear_vel(current, goal, constant=0.2):
     return constant * euclidean_distance(current,goal)
 
 def steering_angle(current, goal):
