@@ -1,70 +1,72 @@
 #!/usr/bin/env python
 import rospy
-from geometry_msgs.msg import PoseStamped, Twist
+from geometry_msgs.msg import Pose, Twist
 from nav_msgs.msg import Path
 from gazebo_msgs.srv import GetModelState
 from std_msgs.msg import String
 import math
 
-def move_turtle():
+# send position not Pose
+def euclidean_distance(current, goal):
+    return math.sqrt((goal.x - current.x)**2 + (goal.y - current.y)** 2)
+
+def linear_vel(current, goal, constant=1.5):
+    return constant * euclidean_distance(current,goal)
+
+def steering_angle(current, goal):
+    return math.atan2(goal.y - current.y, goal.x - current.x)
+
+def angular_vel(current, goal, constant=6):
+    return constant * (steering_angle(current,goal) - current.theta)
+
+def move_turtle(x,y):
     # Initialize the ROS node
     rospy.init_node('turtlebot_controller', anonymous=True)
 
     # Create a publisher for the robot's velocity commands
-    pub_cmd_vel = rospy.Publisher('/mobile_base/commands/velocity', Twist, queue_size=10)
+    vel_pub = rospy.Publisher('/mobile_base/commands/velocity', Twist, queue_size=10)
 
     # Create a rate object to control the loop frequency
     rate = rospy.Rate(10)  # 10 Hz
 
     # Loop through each point in the path
-    x = -1
-    y = 0
-    goal = PoseStamped()
-    goal.pose.position.x = x
-    goal.pose.position.y = y
+    goal = Pose()
+    goal.x = x
+    goal.y = y
 
     # Create a Twist message to control the robot's velocity
-    cmd_vel = Twist()
+    vel_msg = Twist()
 
-    print("yes1")
+    distance_tolerance = 0.2
+
+    gazebo_model_state = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
+    current_pos = gazebo_model_state('mobile_base', 'world')
+
     # Move the robot towards the current goal point
-    while not rospy.is_shutdown():
-        # Get the current position of the robot
-            gazebo_model_state = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
-            current_pos = gazebo_model_state('mobile_base', 'world')
+    while euclidean_distance(current_pos,goal) >= distance_tolerance:
+        vel_msg.linear.x = linear_vel(current_pos,goal)
+        vel_msg.linear.y = 0
+        vel_msg.linear.z = 0
 
-            print("yes2")
+        # Angular velocity in the z-axis.
+        vel_msg.angular.x = 0
+        vel_msg.angular.y = 0
+        vel_msg.angular.z = angular_vel(current_pos,goal)
 
-        # Calculate the distance to the goal point
-            distance = math.sqrt((goal.pose.position.x - current_pos.pose.position.x)**2 + (goal.pose.position.y - current_pos.pose.position.y)**2)
+        vel_pub.publish(vel_msg)
 
-        # Check if the goal has been reached
-            if distance < 0.1:
-                break
+    vel_msg.linear.x = 0
+    vel_msg.angular.z = 0
+    vel_pub.publish(vel_msg)
 
-            print("yes3")
-
-            # Calculate the linear and angular velocities
-            cmd_vel.linear.x = 0.2 * distance
-            cmd_vel.angular.z = 1.5 * (math.atan2(goal.pose.position.y - current_pos.pose.position.y, goal.pose.position.x - current_pos.pose.position.x) - current_pos.pose.orientation.w)
-            # Publish the velocity command
-            pub_cmd_vel.publish(cmd_vel)
-
-            # Sleep to control the loop frequency
-            rate.sleep()
-
-    # Stop the robot after reaching the goal point
-    cmd_vel.linear.x = 0.0
-    cmd_vel.angular.z = 0.0
-    pub_cmd_vel.publish(cmd_vel)
-
-    # Sleep to allow the robot to stop before moving to the next point
-    rospy.sleep(1)
+    rospy.spin()
 
 
 if __name__ == '__main__':
     try:
-        move_turtle()
+        x = float(input("Enter the x coord:"))
+        y = float(input("Enter the y coord:"))
+        move_turtle(x,y)
 
     except rospy.ROSInterruptException:
         pass
