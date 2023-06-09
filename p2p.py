@@ -39,7 +39,6 @@ def rotate_bot(current,goal):
     vel_msg = Twist()
 
     desired_angle = math.atan2(goal.position.y - current.position.y, goal.position.x - current.position.x)
-    #desired_angle = math.atan2(current.position.y - goal.position.y, current.position.x - goal.position.x)
 
     angle_diff = 1 - desired_angle - current_orientation(current.orientation)
     while abs(angle_diff) >= 0.02:
@@ -48,22 +47,11 @@ def rotate_bot(current,goal):
 
         print ("diff:",angle_diff,"desired", desired_angle,"current orientation:", current_orientation(current.orientation))
 
-        # Calculate the difference between the desired angle and the current angle
         angle_diff = desired_angle - current_orientation(current.orientation)
-
-        # Adjust the angle difference to be within the range of -pi to pi
-        # while angle_diff > math.pi:
-        #     angle_diff -= 2 * math.pi
-        # while angle_diff < -math.pi:
-        #     angle_diff += 2* math.pi 
-
-        # Set the angular velocity as a proportional control to the angle difference
-        # kp = 0.5  # Proportional control gain
-        # angular_velocity = kp * angle_diff
 
         vel_msg.angular.x = 0
         vel_msg.angular.y = 0
-        vel_msg.angular.z = 0.2
+        vel_msg.angular.z = angle_diff
 
         vel_pub.publish(vel_msg)
 
