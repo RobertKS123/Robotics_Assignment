@@ -23,20 +23,17 @@ def rotate_bot(current,goal):
     vel_pub = rospy.Publisher('/mobile_base/commands/velocity', Twist, queue_size=10)
     vel_msg = Twist()
 
-    while abs(angular_vel(current.position,goal)) >= 0.2:
-        gazebo_model_state = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
-        current = gazebo_model_state('mobile_base', 'world').pose
-        a = angular_vel(current,goal.position)
-        print("a",current.orientation)
-        vel_msg.angular.x = 0
-        vel_msg.angular.y = 0
-        vel_msg.angular.z = a
-        
-        vel_pub.publish(vel_msg)
-
-    vel_msg.linear.x = 0
-    vel_msg.angular.z = 0
+    #while abs(angular_vel(current.position,goal)) >= 0.2:
+    gazebo_model_state = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
+    current = gazebo_model_state('mobile_base', 'world').pose
+    a = angular_vel(current,goal.position)
+    print("a",current.orientation)
+    vel_msg.angular.x = 0
+    vel_msg.angular.y = 0
+    vel_msg.angular.z = a
+    
     vel_pub.publish(vel_msg)
+
 
     return True
 
