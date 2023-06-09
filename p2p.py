@@ -25,7 +25,7 @@ def rotate_bot(current,goal):
 
     desired_angle = math.atan2(goal.position.y - current.position.y, goal.position.x - current.position.x)
 
-    while abs(angular_vel(current.position,goal)) >= 0.2:
+    while abs(desired_angle - current.orientation.w) >= 0.2:
         gazebo_model_state = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
         current = gazebo_model_state('mobile_base', 'world').pose
 
