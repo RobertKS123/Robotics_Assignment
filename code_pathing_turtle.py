@@ -6,19 +6,12 @@ from gazebo_msgs.srv import GetModelState
 from std_msgs.msg import String
 import cv2
 import numpy as np
-import matplotlib.pyplot as plt
 from heapq import heappop, heappush
 import math
 
 def get_map():
-    image = cv2.imread('base.png')
-    gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    _, threshold_image = cv2.threshold(gray_image, 150, 255, cv2.THRESH_BINARY)
-    binary_image = cv2.bitwise_not(threshold_image)
-    #original_matrix = np.array(binary_image)
-    dil = cv2.morphologyEx(binary_image,cv2.MORPH_DILATE,np.ones((30,30)))
-    binary_image = cv2.bitwise_not(dil)
-    matrix = np.array(binary_image)
+    image = cv2.imread('map_dialated.png')
+    matrix = np.array(image)
     return matrix
 
 def convert_coords(coords):
