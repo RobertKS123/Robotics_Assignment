@@ -50,7 +50,7 @@ def rotate_bot(current,goal):
     #     vel_pub.publish(vel_msg)
     while True:
         current_angle = current.orientation.w
-        goal_angle = math.atan2(goal.y - current.y, goal.x - current.x)
+        goal_angle = math.atan2(goal.position.y - current.position.y, goal.position.x - current.position.xx)
 
         # Calculate the difference between the goal angle and the current angle
         angle_diff = goal_angle - current_angle
