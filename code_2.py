@@ -2,7 +2,7 @@
 import rospy
 from geometry_msgs.msg import Pose
 from nav_msgs.msg import Path
-from nav_msgs.srv import GetModelState
+from gazebo_msgs.srv import GetModelState
 from std_msgs.msg import String
 
 def compute_path(current_pose,target_pose):
