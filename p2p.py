@@ -23,31 +23,58 @@ def rotate_bot(current,goal):
     vel_pub = rospy.Publisher('/mobile_base/commands/velocity', Twist, queue_size=10)
     vel_msg = Twist()
 
-    #desired_angle = math.atan2(goal.position.y - current.position.y, goal.position.x - current.position.x)
-    desired_angle = math.atan2(current.position.y - goal.position.y, current.position.x - goal.position.x)
+    # #desired_angle = math.atan2(goal.position.y - current.position.y, goal.position.x - current.position.x)
+    # desired_angle = math.atan2(current.position.y - goal.position.y, current.position.x - goal.position.x)
 
-    while abs(current.orientation.w - desired_angle ) >= 0.02:
-        gazebo_model_state = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
-        current = gazebo_model_state('mobile_base', 'world').pose
+    # while abs(current.orientation.w - desired_angle ) >= 0.02:
+    #     gazebo_model_state = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
+    #     current = gazebo_model_state('mobile_base', 'world').pose
 
-        # Calculate the difference between the desired angle and the current angle
-        angle_diff = desired_angle - current.orientation.w
+    #     # Calculate the difference between the desired angle and the current angle
+    #     angle_diff = desired_angle - current.orientation.w
 
-        # Adjust the angle difference to be within the range of -pi to pi
-        while angle_diff > math.pi:
+    #     # Adjust the angle difference to be within the range of -pi to pi
+    #     while angle_diff > math.pi:
+    #         angle_diff -= 2 * math.pi
+    #     while angle_diff < -math.pi:
+    #         angle_diff += 2 * math.pi
+
+    #     # Set the angular velocity as a proportional control to the angle difference
+    #     kp = 0.5  # Proportional control gain
+    #     angular_velocity = kp * angle_diff
+
+    #     vel_msg.angular.x = 0
+    #     vel_msg.angular.y = 0
+    #     vel_msg.angular.z = angular_velocity
+
+    #     vel_pub.publish(vel_msg)
+    while True:
+        current_angle = current.orientation.w
+        goal_angle = math.atan2(goal.y - current.y, goal.x - current.x)
+
+        # Calculate the difference between the goal angle and the current angle
+        angle_diff = goal_angle - current_angle
+
+        # Normalize the angle difference to the range [-pi, pi]
+        if angle_diff > math.pi:
             angle_diff -= 2 * math.pi
-        while angle_diff < -math.pi:
+        elif angle_diff < -math.pi:
             angle_diff += 2 * math.pi
 
-        # Set the angular velocity as a proportional control to the angle difference
-        kp = 0.5  # Proportional control gain
-        angular_velocity = kp * angle_diff
-
+        # Set the angular velocity based on the angle difference
         vel_msg.angular.x = 0
         vel_msg.angular.y = 0
-        vel_msg.angular.z = angular_velocity
+        vel_msg.angular.z = angle_diff
 
+        # Publish the velocity message
         vel_pub.publish(vel_msg)
+
+        # Check if the angle difference is within a threshold (e.g., 0.1 radians)
+        if abs(angle_diff) < 0.1:
+            break
+
+        # Sleep for a short duration
+        rospy.sleep(0.1)
 
     vel_msg.angular.z = 0
     vel_pub.publish(vel_msg)
