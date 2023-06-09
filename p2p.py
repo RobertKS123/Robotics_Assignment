@@ -27,10 +27,10 @@ def move_turtle():
     while not rospy.is_shutdown():
         # Get the current position of the robot
             gazebo_model_state = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
-            current_pos = coordinates = gazebo_model_state('mobile_base', 'world')
+            current_pos = gazebo_model_state('mobile_base', 'world')
 
         # Calculate the distance to the goal point
-            distance = math.sqrt((x_goal - current_pos[0])**2 + (y_goal - current_pos[1])**2)
+            distance = math.sqrt((x_goal - current_pos.pose.x)**2 + (y_goal - current_pos.pose.y)**2)
 
         # Check if the goal has been reached
             if distance < 0.1:
