@@ -25,7 +25,7 @@ def rotate_bot(current,goal):
 
     desired_angle = math.atan2(goal.position.y - current.position.y, goal.position.x - current.position.x)
 
-    while abs(desired_angle - current.orientation.w) >= 0.2:
+    while abs(desired_angle - current.orientation.w) >= 0.02:
         gazebo_model_state = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
         current = gazebo_model_state('mobile_base', 'world').pose
 
@@ -33,9 +33,9 @@ def rotate_bot(current,goal):
         angle_diff = desired_angle - current.orientation.w
 
         # Adjust the angle difference to be within the range of -pi to pi
-        while angle_diff > math.pi:
+        while angle_diff < math.pi:
             angle_diff -= 2 * math.pi
-        while angle_diff < -math.pi:
+        while angle_diff > -math.pi:
             angle_diff += 2 * math.pi
 
         # Set the angular velocity as a proportional control to the angle difference
