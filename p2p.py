@@ -31,8 +31,8 @@ def move_turtle(x,y):
 
     # Loop through each point in the path
     goal = Pose()
-    goal.x = x
-    goal.y = y
+    goal.position.x = x
+    goal.position.y = y
 
     # Create a Twist message to control the robot's velocity
     vel_msg = Twist()
@@ -43,15 +43,15 @@ def move_turtle(x,y):
     current_pos = gazebo_model_state('mobile_base', 'world')
 
     # Move the robot towards the current goal point
-    while euclidean_distance(current_pos,goal) >= distance_tolerance:
-        vel_msg.linear.x = linear_vel(current_pos,goal)
+    while euclidean_distance(current_pos.position,goal.position) >= distance_tolerance:
+        vel_msg.linear.x = linear_vel(current_pos.position,goal.position)
         vel_msg.linear.y = 0
         vel_msg.linear.z = 0
 
         # Angular velocity in the z-axis.
         vel_msg.angular.x = 0
         vel_msg.angular.y = 0
-        vel_msg.angular.z = angular_vel(current_pos,goal)
+        vel_msg.angular.z = angular_vel(current_pos.position,goal.position)
 
         vel_pub.publish(vel_msg)
 
