@@ -27,7 +27,7 @@ def convert_coords(coords):
     origin_B = (0, 0)
 
     # Scaling factor between the two grids
-    scaling_factor = 1 / 10  # Assuming 20 units in Map A is equal to 1 unit in Map B
+    scaling_factor = 1.0 / 10  # Assuming 20 units in Map A is equal to 1 unit in Map B
 
     # List of points on the path in Map A
     path_points_A = coords
@@ -49,7 +49,7 @@ def convert_coords_reverse(coords):
     origin_B = (0, 0)
 
     # Scaling factor between the two grids
-    scaling_factor = 1 / 10  # Assuming 20 units in Map A is equal to 1 unit in Map B
+    scaling_factor = 1.0 / 10  # Assuming 20 units in Map A is equal to 1 unit in Map B
 
     # List of points on the path in Map B
     path_points_B = coords
@@ -66,6 +66,9 @@ def convert_coords_reverse(coords):
 
 
 def astar_search(matrix, start, goal):
+    start = tuple(start)
+    goal = tuple(goal)
+
     rows, cols = matrix.shape
     
     # Define possible movements (up, down, left, right, diagonals)
@@ -107,7 +110,7 @@ def astar_search(matrix, start, goal):
                 continue
             
             # Check if the neighbor is an obstacle (white pixel)
-            if matrix[int(neighbor)] == 0:
+            if matrix[neighbor] == 0:
                 continue
             
             # Calculate the cost to reach the neighbor from the start node
@@ -279,7 +282,7 @@ if __name__ == '__main__':
         x = float(input("x coord:"))
         y = float(input("y coord:"))
 
-        goal = (y,x)
+        goal = (x,y)
 
         map = get_map()
 
@@ -291,15 +294,21 @@ if __name__ == '__main__':
 
         path = astar_search(map,system_converted_coords[0],system_converted_coords[1])
 
-        simple_path = simplify_path(path)
+        if path is not None:
 
-        print(simple_path)
+            simple_path = simplify_path(path)
 
-        actual_path = convert_coords(simple_path)
+            print(simple_path)
 
-        print(actual_path)
+            actual_path = convert_coords(simple_path)
 
-        move_turtle(actual_path)
+            print(actual_path)
+
+            move_turtle(actual_path)
+        
+        else:
+
+            print("No path found")
 
     except rospy.ROSInterruptException:
         pass
