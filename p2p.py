@@ -16,8 +16,8 @@ def linear_vel(current, goal, constant=0.2):
 def steering_angle(current, goal):
     return math.atan2(goal.y - current.y, goal.x - current.x)
 
-def angular_vel(current, goal, constant=6):
-    return constant * (steering_angle(current.position,goal) - current.orientation.x)
+def angular_vel(current, goal):
+    return 2 * (steering_angle(current.position,goal) - current.orientation.z)
 
 def rotate_bot(current,goal):
     vel_pub = rospy.Publisher('/mobile_base/commands/velocity', Twist, queue_size=10)
@@ -25,7 +25,7 @@ def rotate_bot(current,goal):
 
     while angular_vel(current,goal.position) >= 0.2:
         a = angular_vel(current,goal.position)
-        print("a",a)
+        print("a",current.orientation)
         vel_msg.angular.x = 0
         vel_msg.angular.y = 0
         vel_msg.angular.z = a
@@ -45,7 +45,7 @@ def move_bot(current,goal):
 
     while euclidean_distance(current.position,goal.position) >= 0.2:
         m = linear_vel(current.position,goal.position)
-        print("m:",m)
+        #print("m:",m)
         vel_msg.linear.x = m
         vel_msg.linear.y = 0
         vel_msg.linear.z = 0
