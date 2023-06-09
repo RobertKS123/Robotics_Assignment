@@ -4,16 +4,21 @@ from geometry_msgs.msg import Pose, Twist
 from nav_msgs.msg import Path
 from gazebo_msgs.srv import GetModelState
 from std_msgs.msg import String
-import cv2
+from PIL import Image
 import numpy as np
 from heapq import heappop, heappush
 import math
 import tf
 from tf.transformations import euler_from_quaternion
+import rospkg
 
 def get_map():
-    image = cv2.imread('./map_dialated.png')
+    rospack = rospkg.RosPack()
+    package_path = rospack.get_path('slam_package')
+    file_path = package_path + '/Robotics_Assignment/map_dialated.png'
+    image = Image.open(file_path)
     matrix = np.array(image)
+    print(len(matrix))
     return matrix
 
 def convert_coords(coords):
@@ -81,7 +86,7 @@ def astar_search(matrix, start, goal):
                 continue
             
             # Check if the neighbor is an obstacle (white pixel)
-            if matrix[neighbor] == 0:
+            if matrix[int(neighbor)] == 0:
                 continue
             
             # Calculate the cost to reach the neighbor from the start node
@@ -263,7 +268,11 @@ if __name__ == '__main__':
 
         simple_path = simplify_path(path)
 
+        print(simple_path)
+
         actual_path = convert_coords(simple_path)
+
+        print(actual_path)
 
         move_turtle(actual_path)
 
