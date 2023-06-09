@@ -11,7 +11,7 @@ def compute_path(current_pose,target_pose):
 
     # Create the start pose
     start_pose = Pose()
-    start_pose.pose = current_pose.pose
+    start_pose.pose = current_pose
     path.poses.append(start_pose)
 
     # Create the target pose
