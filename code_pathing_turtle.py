@@ -43,6 +43,27 @@ def convert_coords(coords):
 
     return swapped_points
 
+def convert_coords_reverse(coords):
+    # Coordinates of the origin of Map A and Map B
+    origin_A = (400, 470)
+    origin_B = (0, 0)
+
+    # Scaling factor between the two grids
+    scaling_factor = 1 / 10  # Assuming 20 units in Map A is equal to 1 unit in Map B
+
+    # List of points on the path in Map B
+    path_points_B = coords
+
+    # Coordinate transformation
+    path_points_A = [((x - origin_B[0]) / scaling_factor + origin_A[0],
+                    (y - origin_B[1]) / scaling_factor + origin_A[1])
+                    for x, y in path_points_B]
+
+    swapped_points = [(y, x) for x, y in path_points_A]
+    # The path points are now transformed to Map A coordinates
+
+    return swapped_points
+
 
 def astar_search(matrix, start, goal):
     rows, cols = matrix.shape
@@ -264,7 +285,11 @@ if __name__ == '__main__':
 
         current_pos = get_pos()
 
-        path = astar_search(map,current_pos,goal)
+        system_converted_coords = convert_coords_reverse([current_pos,goal])
+
+        system_converted_coords = np.around(system_converted_coords,0)
+
+        path = astar_search(map,system_converted_coords[0],system_converted_coords[1])
 
         simple_path = simplify_path(path)
 
