@@ -17,8 +17,11 @@ def move_turtle():
     rate = rospy.Rate(10)  # 10 Hz
 
     # Loop through each point in the path
-    point = (-1,1)
-    x_goal, y_goal = point
+    x = -1
+    y = 0
+    goal = PoseStamped()
+    goal.pose.position.x = x
+    goal.pose.position.y = y
 
     # Create a Twist message to control the robot's velocity
     cmd_vel = Twist()
@@ -30,7 +33,7 @@ def move_turtle():
             current_pos = gazebo_model_state('mobile_base', 'world')
 
         # Calculate the distance to the goal point
-            distance = math.sqrt((x_goal - current_pos.pose.x)**2 + (y_goal - current_pos.pose.y)**2)
+            distance = math.sqrt((goal.pose.position.x - current_pos.pose.position.x)**2 + (goal.pose.position.y - current_pos.pose.position.y)**2)
 
         # Check if the goal has been reached
             if distance < 0.1:
@@ -38,8 +41,7 @@ def move_turtle():
 
             # Calculate the linear and angular velocities
             cmd_vel.linear.x = 0.2 * distance
-            cmd_vel.angular.z = 1.5 * (math.atan2(y_goal - current_pos[1], x_goal - current_pos[0]) - current_pos[2])
-
+            cmd_vel.angular.z = 1.5 * (math.atan2(goal.pose.position.y - current_pos.pose.position.y)**2, goal.pose.position.x - current_pos.pose.position.x) - current_pos.pose.orientation.w)
             # Publish the velocity command
             pub_cmd_vel.publish(cmd_vel)
 
