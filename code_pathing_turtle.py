@@ -37,7 +37,6 @@ def convert_coords(coords):
                     -1 * ((y - origin_A[1]) / scaling_factor))
                     for x, y in path_points_A]
 
-
     swapped_points = [(y, x) for x, y in path_points_B]
     # The path points are now transformed to Map B coordinates
 
@@ -63,8 +62,8 @@ def convert_coords_reverse(coords):
 
 
 def astar_search(matrix, start, goal):
-    start = tuple(start)
-    goal = tuple(goal)
+    start = tuple(map(int,start))
+    goal = tuple(map(int,goal))
 
     rows, cols = matrix.shape
     
