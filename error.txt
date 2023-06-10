@@ -1,0 +1,13 @@
+robert@LAPTOP-K6G8I6M5:~/robot_assignment_ws$ rosrun slam_package Robotics_Assignment/p2p.py
+Enter the x coord:0
+Enter the y coord:-1
+Traceback (most recent call last):
+  File "/home/robert/ros_home/robot_assignment_ws/src/slam_package/Robotics_Assignment/p2p.py", line 69, in <module>
+    move_turtle(x,y)
+  File "/home/robert/ros_home/robot_assignment_ws/src/slam_package/Robotics_Assignment/p2p.py", line 54, in move_turtle
+    vel_msg.angular.z = angular_vel(current_pos.position,goal.position)
+  File "/home/robert/ros_home/robot_assignment_ws/src/slam_package/Robotics_Assignment/p2p.py", line 20, in angular_vel
+    return constant * (steering_angle(current,goal) - current.theta)
+AttributeError: 'Point' object has no attribute 'theta'
+
+

@@ -52,7 +52,7 @@ def convert_coords_reverse(coords):
     path_points_B = coords
 
     # Coordinate transformation
-    path_points_A = [(((x * scaling_factor) - origin_A[0]),
+    path_points_A = [(((x * scaling_factor) + origin_A[0]),
                     ((y * scaling_factor ) - origin_A[1]))
                     for x, y in path_points_B]
 
