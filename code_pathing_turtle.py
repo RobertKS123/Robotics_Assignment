@@ -171,7 +171,7 @@ def simplify_path(points, epsilon=2.0):
 def get_pos():
     gazebo_model_state = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
     coordinates = gazebo_model_state('mobile_base', 'world')
-    return (coordinates.pose.position.y,coordinates.pose.position.x)
+    return (coordinates.pose.position.x,coordinates.pose.position.y)
 
 # Get the distance between the robots current position and the next goal
 def euclidean_distance(current, goal):
