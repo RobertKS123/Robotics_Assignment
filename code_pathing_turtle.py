@@ -31,7 +31,7 @@ def convert_coords(coords):
     # Scaling factor between the two grids
     scaling_factor = 26.0  
 
-    path_points_A = [tuple(x,y) for x in coords]
+    path_points_A = coords
 
     # Coordinate transformation
     path_points_B = [((-1*(x - origin_A[0]) / scaling_factor),
