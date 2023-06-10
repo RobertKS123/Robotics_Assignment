@@ -23,18 +23,18 @@ def get_map():
 
 def convert_coords(coords):
     # Coordinates of the origin of Map A and Map B
-    origin_A = (400, 470)
+    origin_A = (407, 467)
     origin_B = (0, 0)
 
     # Scaling factor between the two grids
-    scaling_factor = 1.0 / 10  # Assuming 20 units in Map A is equal to 1 unit in Map B
+    scaling_factor = 26  # Assuming 20 units in Map A is equal to 1 unit in Map B
 
     # List of points on the path in Map A
     path_points_A = coords
 
     # Coordinate transformation
-    path_points_B = [((x - origin_A[0]) * scaling_factor + origin_B[0],
-                    (y - origin_A[1]) * scaling_factor + origin_B[1])
+    path_points_B = [(-1 * ((x - origin_A[0]) / scaling_factor),
+                    -1 * ((y - origin_A[1]) / scaling_factor))
                     for x, y in path_points_A]
 
 
@@ -44,23 +44,20 @@ def convert_coords(coords):
     return swapped_points
 
 def convert_coords_reverse(coords):
-    # Coordinates of the origin of Map A and Map B
-    origin_A = (400, 470)
+    origin_A = (467, 407)
     origin_B = (0, 0)
 
-    # Scaling factor between the two grids
-    scaling_factor = 1.0 / 10  # Assuming 20 units in Map A is equal to 1 unit in Map B
+    scaling_factor = 26  # Assuming 20 units in Map A is equal to 1 unit in Map B
 
     # List of points on the path in Map B
     path_points_B = coords
 
     # Coordinate transformation
-    path_points_A = [((x - origin_B[0]) / scaling_factor + origin_A[0],
-                    (y - origin_B[1]) / scaling_factor + origin_A[1])
+    path_points_A = [(((x * scaling_factor) - origin_A[0]),
+                    ((y * scaling_factor ) - origin_A[1]))
                     for x, y in path_points_B]
 
-    swapped_points = [(y, x) for x, y in path_points_A]
-    # The path points are now transformed to Map A coordinates
+    swapped_points = np.abs([(y, x) for x, y in path_points_A])
 
     return swapped_points
 
