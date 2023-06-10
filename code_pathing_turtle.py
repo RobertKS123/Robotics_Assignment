@@ -15,7 +15,7 @@ import rospkg
 def get_map():
     rospack = rospkg.RosPack()
     package_path = rospack.get_path('slam_package')
-    file_path = package_path + '/Robotics_Assignment/map_dialated.png'
+    file_path = package_path + '/Robotics_Assignment/map_dil.png'
     image = Image.open(file_path)
     matrix = np.array(image)
     print(len(matrix))
@@ -62,8 +62,8 @@ def convert_coords_reverse(coords):
 
 
 def astar_search(matrix, start, goal):
-    start = tuple(map(int,start))
-    goal = tuple(map(int,goal))
+    start = tuple([int(x) for x in start])
+    goal = tuple([int(x) for x in goal])
 
     rows, cols = matrix.shape
     
