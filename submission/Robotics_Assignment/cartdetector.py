@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-
+#James Thackeray-2228361
+#Robert Schwarz-2136369
 import rospy
 import numpy as np
 from geometry_msgs.msg import Twist
