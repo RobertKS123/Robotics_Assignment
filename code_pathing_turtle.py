@@ -19,7 +19,7 @@ def get_map():
     package_path = rospack.get_path('slam_package')
     file_path = package_path + '/Robotics_Assignment/map_dil2.png'
     image = Image.open(file_path)
-    print(len(matrix))
+    matrix = np.array(image)
     return matrix
 
 # Converts the coordinates from the gazebo system to the map system
