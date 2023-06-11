@@ -257,7 +257,7 @@ def move_turtle(path):
         rotate_bot(current_pos,goal)
         move_bot(current_pos,goal)
 
-    print("facken ayy")
+    print("goal completed!")
 
 
 if __name__ == '__main__':
@@ -284,11 +284,11 @@ if __name__ == '__main__':
 
             simple_path = simplify_path(path)
 
-            print(simple_path)
+            #print(simple_path)
 
             actual_path = convert_coords(simple_path)
 
-            print(actual_path)
+            #print(actual_path)
 
             # Move the robot to the goal
             move_turtle(actual_path)
