@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+#James Thackeray-2228361
+#Robert Schwarz-2136369
 import rospy
 from geometry_msgs.msg import Pose, Twist
 from nav_msgs.msg import Path
