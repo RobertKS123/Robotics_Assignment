@@ -140,7 +140,7 @@ def point_line_distance(point, start, end):
     return numerator / denominator
 
 # Reduce the number of points in the path to the goal
-def simplify_path(points, epsilon=15):
+def simplify_path(points, epsilon=13):
     if len(points) < 3:
         return points
 
