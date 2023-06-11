@@ -139,14 +139,26 @@ def point_line_distance(point, start, end):
     return numerator / denominator
 
 # Reduce the number of points in the path to the goal
-def simplify_path(points, epsilon=2.0):
+def simplify_path(points, epsilon=20):
     if len(points) < 3:
         return points
 
     start_point = points[0]
     end_point = points[-1]
+#start of new
+    simplified_path = []
 
-    # Find the point with the maximum distance
+    prev_point = points[0]
+
+    for i in range(1, len(points)-1):
+        current_point = points[i]
+        distance = ((current_point[0] - prev_point[0]) ** 2 + (current_point[1] - prev_point[1]) ** 2) ** 0.5
+        if distance > epsilon:
+            simplified_path.append(current_point)
+            prev_point = current_point
+    simplified_path.append(points[len(points)-1])
+    return simplified_path
+'''    # Find the point with the maximum distance
     max_distance = 0
     max_index = 0
     for i in range(1, len(points) - 1):
@@ -164,8 +176,9 @@ def simplify_path(points, epsilon=2.0):
         simplified_path = left_subpath[:-1] + right_subpath
     else:
         simplified_path = [start_point, end_point]
+'''
+#    return simplified_path
 
-    return simplified_path
 
 # Retuns the current position of the robot
 def get_pos():
@@ -205,7 +218,7 @@ def rotate_bot(current,goal):
     angle_diff = 1 - desired_angle - current_orientation(current.orientation)
 
     # Rotate untill within 0.2 rads of the desired angle
-    while abs(angle_diff) >= 0.0001:
+    while abs(angle_diff) >= 0.001:
         gazebo_model_state = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
         current = gazebo_model_state('mobile_base', 'world').pose
 
