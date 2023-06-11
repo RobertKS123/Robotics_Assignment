@@ -19,7 +19,6 @@ def get_map():
     package_path = rospack.get_path('slam_package')
     file_path = package_path + '/Robotics_Assignment/map_dil2.png'
     image = Image.open(file_path)
-    matrix = np.array(image)
     print(len(matrix))
     return matrix
 
